@@ -44,7 +44,11 @@ export default function DonorDetail() {
       <Card pad>
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="serif">{donor.display_name}</h1>
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <h1 className="serif">{donor.display_name}</h1>
+              <Chip tone={donor.persona.tone as Tone}>{donor.persona.label}</Chip>
+            </div>
+            <p className="dim text-xs">{donor.persona.blurb}</p>
             <div className="dim mt-1.5 flex flex-wrap gap-4 text-sm">
               <span>{donor.primary_email ?? 'no email on file'}</span>
               <span>{donor.primary_phone ?? 'no phone on file'}</span>
@@ -68,6 +72,11 @@ export default function DonorDetail() {
             </div>
           </div>
         </div>
+        {donor.total_impact && (
+          <div className="mt-4 rounded-xl border px-4 py-2.5 text-sm" style={{ borderColor: 'var(--sage-line)', background: 'var(--sage-bg)', color: 'var(--sage-ink)' }}>
+            {donor.total_impact.sentence}
+          </div>
+        )}
       </Card>
 
       <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
@@ -94,6 +103,11 @@ export default function DonorDetail() {
                         {d.txn_date} &middot; {d.source_count} source
                         {d.source_count !== 1 ? 's' : ''} matched
                       </div>
+                      {d.impact && (
+                        <div className="mt-1 text-xs font-medium" style={{ color: 'var(--sage-ink)' }}>
+                          {d.impact.sentence}
+                        </div>
+                      )}
                     </div>
                     <div className="flex flex-col items-end gap-1">
                       <Chip tone={DONATION_TONE[d.status]}>{d.status.replace('_', ' ')}</Chip>

@@ -2,23 +2,22 @@ from sqlalchemy.orm import Session
 
 from app import models
 from app.config import get_settings
+from app.services.impact_service import impact_for_amount
 
 settings = get_settings()
 
 
-def _template_thank_you(donor: models.Donor, donation: models.Donation | None) -> tuple[str, str]:
+def _choose_channel(donor: models.Donor) -> models.DraftChannel:
+    # WhatsApp needs a number to send to - that's the real, simple rule.
+    return models.DraftChannel.whatsapp if donor.primary_phone else models.DraftChannel.email
+
+
+def _template_thank_you(
+    donor: models.Donor, donation: models.Donation | None, channel: models.DraftChannel
+) -> tuple[str, str]:
     first_name = donor.display_name.split(" ")[0]
-    if donation:
-        subject = f"Thank you for your {donation.campaign or 'gift'} to UPAY"
-        body = (
-            f"Dear {first_name},\n\n"
-            f"Thank you for your generous contribution of ₹{float(donation.amount):,.0f} "
-            f"to UPAY's {donation.campaign or 'ongoing work'} on "
-            f"{donation.txn_date.strftime('%d %b %Y')}. Your support helps keep our open classrooms "
-            "running and gives children in slum and street communities a place to learn.\n\n"
-            "With gratitude,\nTeam UPAY"
-        )
-    else:
+
+    if not donation:
         subject = "Thank you for supporting UPAY"
         body = (
             f"Dear {first_name},\n\n"
@@ -26,19 +25,49 @@ def _template_thank_you(donor: models.Donor, donation: models.Donation | None) -
             "bring education to underprivileged children across our learning centres.\n\n"
             "With gratitude,\nTeam UPAY"
         )
+        return subject, body
+
+    impact = impact_for_amount(float(donation.amount), donation.campaign)
+    subject = f"Thank you for your {donation.campaign or 'gift'} to UPAY"
+
+    if channel == models.DraftChannel.whatsapp:
+        body = (
+            f"Hi {first_name}! \U0001f64f\n\n"
+            f"Your ₹{float(donation.amount):,.0f} gift to UPAY's {donation.campaign or 'ongoing work'} "
+            f"just came through — {impact['sentence']}.\n\n"
+            "Thank you for being part of this. – Team UPAY"
+        )
+    else:
+        body = (
+            f"Dear {first_name},\n\n"
+            f"Thank you for your generous contribution of ₹{float(donation.amount):,.0f} "
+            f"to UPAY's {donation.campaign or 'ongoing work'} on "
+            f"{donation.txn_date.strftime('%d %b %Y')}. That's {impact['sentence']} — your "
+            "support helps keep our open classrooms running and gives children in slum and street "
+            "communities a place to learn.\n\n"
+            "With gratitude,\nTeam UPAY"
+        )
     return subject, body
 
 
-def _template_update(donor: models.Donor, donation: models.Donation | None) -> tuple[str, str]:
+def _template_update(
+    donor: models.Donor, donation: models.Donation | None, channel: models.DraftChannel
+) -> tuple[str, str]:
     first_name = donor.display_name.split(" ")[0]
     campaign = donation.campaign if donation else "our programmes"
     subject = f"An update from UPAY on {campaign}"
-    body = (
-        f"Dear {first_name},\n\n"
-        f"Thanks to supporters like you, {campaign} is reaching more children than ever. "
-        "We wanted to share a quick update on the impact your giving has made this term.\n\n"
-        "Warmly,\nTeam UPAY"
-    )
+    if channel == models.DraftChannel.whatsapp:
+        body = (
+            f"Hi {first_name}, quick update from UPAY — {campaign} is reaching more children "
+            "than ever thanks to supporters like you. More soon! – Team UPAY"
+        )
+    else:
+        body = (
+            f"Dear {first_name},\n\n"
+            f"Thanks to supporters like you, {campaign} is reaching more children than ever. "
+            "We wanted to share a quick update on the impact your giving has made this term.\n\n"
+            "Warmly,\nTeam UPAY"
+        )
     return subject, body
 
 
@@ -48,6 +77,7 @@ def _sources_for(donor: models.Donor, donation: models.Donation | None) -> list[
         sources.append("donation record")
         if donation.campaign:
             sources.append("campaign data")
+        sources.append("impact model")
     return sources
 
 
@@ -91,19 +121,21 @@ def _generate_with_llm(
 def generate_draft(
     db: Session, donor: models.Donor, donation: models.Donation | None, kind: str = "thank_you"
 ) -> models.Draft:
+    channel = _choose_channel(donor)
     llm_result = _generate_with_llm(donor, donation, kind)
     if llm_result:
         subject, body = llm_result
         generated_by = "llm"
     else:
         template_fn = _template_update if kind == "update" else _template_thank_you
-        subject, body = template_fn(donor, donation)
+        subject, body = template_fn(donor, donation, channel)
         generated_by = "template"
 
     draft = models.Draft(
         donor_id=donor.id,
         donation_id=donation.id if donation else None,
         kind=models.DraftKind(kind),
+        channel=channel,
         status=models.DraftStatus.draft,
         subject=subject,
         body=body,

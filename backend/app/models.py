@@ -69,6 +69,11 @@ class DraftKind(str, enum.Enum):
     alert = "alert"
 
 
+class DraftChannel(str, enum.Enum):
+    whatsapp = "whatsapp"
+    email = "email"
+
+
 class DraftStatus(str, enum.Enum):
     draft = "draft"
     approved = "approved"
@@ -201,6 +206,7 @@ class Draft(Base):
     donor_id: Mapped[int | None] = mapped_column(ForeignKey("donors.id"), nullable=True)
     donation_id: Mapped[int | None] = mapped_column(ForeignKey("donations.id"), nullable=True)
     kind: Mapped[DraftKind] = mapped_column(Enum(DraftKind), default=DraftKind.thank_you)
+    channel: Mapped[DraftChannel] = mapped_column(Enum(DraftChannel), default=DraftChannel.email)
     status: Mapped[DraftStatus] = mapped_column(Enum(DraftStatus), default=DraftStatus.draft)
     subject: Mapped[str] = mapped_column(String(255))
     body: Mapped[str] = mapped_column(Text)

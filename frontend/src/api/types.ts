@@ -42,6 +42,13 @@ export interface DonorAlias {
   source: string
 }
 
+export interface Impact {
+  units: number
+  label: string
+  rate: number
+  sentence: string
+}
+
 export interface Donation {
   id: number
   campaign: string | null
@@ -51,6 +58,23 @@ export interface Donation {
   status: string
   source_count: number
   acknowledgement_status: string
+  impact: Impact | null
+}
+
+export type PersonaKey =
+  | 'new_supporter'
+  | 'one_time'
+  | 'steady_monthly'
+  | 'crisis_responder'
+  | 'champion'
+  | 'lapsing'
+  | 'regular'
+
+export interface Persona {
+  key: PersonaKey
+  label: string
+  tone: string
+  blurb: string
 }
 
 export interface DonorDetail extends Donor {
@@ -58,6 +82,8 @@ export interface DonorDetail extends Donor {
   donations: Donation[]
   total_given: number
   donation_count: number
+  persona: Persona
+  total_impact: Impact | null
 }
 
 export interface ImportSummary {
@@ -101,6 +127,7 @@ export interface Draft {
   donor_id: number | null
   donation_id: number | null
   kind: 'thank_you' | 'update' | 'alert'
+  channel: 'whatsapp' | 'email'
   status: 'draft' | 'approved' | 'sent'
   subject: string
   body: string
@@ -123,5 +150,47 @@ export interface DashboardData {
   at_risk_count: number
   pending_review_count: number
   pending_drafts_count: number
+  monthly: DashboardMonthly[]
+}
+
+export interface Anomaly {
+  type: 'shared_contact' | 'rapid_fire' | 'conflicting_identity'
+  title: string
+  description: string
+  donor_ids: number[]
+}
+
+export interface AtRiskDonor {
+  donor_id: number
+  donor_name: string
+  days_since_last_gift: number
+  donation_count: number
+  total_given: number
+  last_campaign: string | null
+  urgency_score: number
+}
+
+export interface CampaignImpact {
+  campaign: string
+  amount: number
+  units: number
+  label: string
+}
+
+export interface PersonaSlice {
+  key: PersonaKey
+  label: string
+  tone: string
+  count: number
+}
+
+export interface ImpactWall {
+  total_donors: number
+  total_donations: number
+  total_amount: number
+  total_units: number
+  total_unit_label: string
+  campaigns: CampaignImpact[]
+  personas: PersonaSlice[]
   monthly: DashboardMonthly[]
 }

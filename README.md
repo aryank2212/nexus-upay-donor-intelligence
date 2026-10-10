@@ -9,6 +9,14 @@ team a dashboard, a review queue for anything uncertain, and an AI Copilot that 
 thank-yous grounded only in verified records — nothing sends without a human approving it.
 A public landing page explains the pitch; the console itself sits behind a real login.
 
+Beyond reconciliation, NEXUS also: classifies every donor into a real behavioural persona
+(Champion, Steady Monthly, Crisis Responder...), translates each gift into a concrete
+unit of impact ("≈ 6 relief kits funded"), ranks lapsing donors by genuine urgency
+rather than a raw day count, scans for anomalies (merges that disagree with themselves,
+suspiciously tight gift clusters), and routes AI-drafted thank-yous to WhatsApp or email
+depending on what contact info a donor actually has. All of it runs on real data already
+in the database — none of it is a mock-up layered on top.
+
 This repo is the working prototype behind the pitch deck (`Samadhan_4RottenRats.pptx`).
 
 ## Architecture
@@ -115,12 +123,23 @@ something real to show. **Reset all data** clears the donor/donation tables back
    date). This is the exact "messy data in, clean donor out" story from the deck.
 4. **Review Queue** → four open items: two unmatched bank credits, one bad import, and
    "Deepak Verma" vs "Deepak Sharma" flagged as a possible duplicate (80% name
-   similarity) — **Merge** or **Not same**, staff decides, the system never guesses.
+   similarity). Drag a card right to confirm or left to dismiss, or just use the
+   buttons — both call the same real resolve endpoint. Merge the Deepak pair, then check
+   the Dashboard's Anomalies card: it now flags that the merged donor's own records
+   disagree on phone number, worth a second look.
 5. **AI Copilot** → thank-you drafts waiting, each citing its sources (donor profile,
-   donation record, campaign data). **Approve and send** on one. Use **+ Draft a
-   message** to generate an on-demand thank-you or programme update for any donor.
-6. **Dashboard** → total donors, retention rate, recurring vs. at-risk segments, and
-   monthly giving — the fundraising health view staff would check every morning.
+   donation record, campaign data, impact model) and rendered as a WhatsApp bubble or an
+   email card depending on whether that donor has a phone on file. **Approve and send**
+   on one. Use **+ Draft a message** to generate an on-demand thank-you or programme
+   update for any donor.
+6. **Dashboard** → total donors, retention rate, recurring vs. at-risk segments, monthly
+   giving, a **Who to re-engage** list ranked by real urgency (not just days silent), and
+   an **Anomalies** panel scanned fresh on every visit.
+7. **Donor 360** (any donor) → their computed persona badge and a per-gift, and
+   lifetime, impact sentence ("≈ 6 relief kits funded").
+8. **Impact Wall** (`/impact`, public, no login) → the same real aggregates — giving by
+   month, by campaign translated into impact units, and the donor-persona mix — with no
+   donor names or contact details anywhere on the page.
 
 ## Project layout
 
@@ -134,9 +153,14 @@ backend/
       normalize.py          name/email/phone/amount cleanup
       dedupe_service.py     identity matching (exact + fuzzy + transaction corroboration)
       reconcile_service.py  payment ↔ donation matching
-      copilot_service.py    grounded draft generation (template + optional LLM)
+      copilot_service.py    grounded draft generation (template + optional LLM), picks
+                             WhatsApp vs. email per donor, weaves in impact_service
+      impact_service.py     ₹ amount -> a countable unit ("6 relief kits")
+      persona_service.py    real donor classification from actual giving history
+      urgency_service.py    re-engagement ranking (history + value lost to silence)
+      anomaly_service.py    shared-contact, rapid-fire, and conflicting-merge detection
       import_service.py     CSV parsing orchestration
-    routers/              REST API endpoints (auth, contact, public, + the app's own)
+    routers/              REST API endpoints (auth, contact, public, insights, + the app's own)
     seed_data/             demo CSVs
     seed.py                 demo loader + reset + demo-user bootstrap
 frontend/
@@ -146,13 +170,16 @@ frontend/
     components/
       blocks/                 landing-page sections adapted from Aceternity UI:
                                TextGenerateEffect, LogoCloud, FAQAccordion,
-                               ContactSection, CTASection
+                               ContactSection, CTASection, ReconciliationDemo
       AppShell.tsx             hover-expand sidebar (Aceternity "Sidebars" pattern)
       ui.tsx                   Card / Chip / Kpi / PageHead design-system primitives
     pages/
       Landing.tsx              public marketing page
+      ImpactWall.tsx           public live aggregates, no donor PII
       Auth.tsx                 login / signup (Aceternity signup-form pattern)
       Dashboard, ReviewQueue, Copilot, Donors, DonorDetail, Import   the console
+                               (ReviewQueue cards are swipe-to-resolve via framer-motion
+                               drag, Copilot renders WhatsApp bubbles vs. email cards)
 docker-compose.yml        PostgreSQL for local dev
 ```
 

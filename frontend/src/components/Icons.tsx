@@ -205,3 +205,52 @@ export const IcLayers = (p: P) => (
     <path d="M1.8 11.4 8 14.6l6.2-3.2" />
   </Base>
 )
+
+export const IcWhatsapp = (p: P) => (
+  <Base {...p} strokeWidth={1.3}>
+    <path d="M3.4 12.6 2.4 14l1.44-.98A6 6 0 1 0 3.4 12.6Z" />
+    <path d="M5.6 5.6c.1-.3.4-.3.6-.3h.4c.15 0 .3.03.4.3.12.3.4 1 .44 1.1.04.1.06.2 0 .32-.06.12-.1.2-.2.3l-.28.3c-.1.1-.2.2-.08.4.1.2.5.85 1.1 1.38.76.68 1.35.9 1.55 1 .2.1.3.08.42-.05l.4-.47c.14-.17.25-.14.42-.08l1 .47c.17.08.28.12.32.2.04.08.04.45-.1.9-.15.42-.85.8-1.2.85-.3.05-.7.07-2.25-.47-1.9-.68-3.1-2.6-3.2-2.72-.1-.12-.76-1-.76-1.92s.5-1.37.68-1.56Z" fill="currentColor" stroke="none" />
+  </Base>
+)
+
+export const IcHeartHand = (p: P) => (
+  <Base {...p}>
+    <path d="M8 6.2S6.3 4.4 4.9 4.4A2.1 2.1 0 0 0 2.8 6.5c0 2.4 3.3 4.4 5.2 5.7 1.9-1.3 5.2-3.3 5.2-5.7a2.1 2.1 0 0 0-2.1-2.1C9.7 4.4 8 6.2 8 6.2Z" />
+    <path d="M2 13.6h3.2l1.8-1.2 2 .8-.4 1-2.4.4-3-.4" />
+  </Base>
+)
+
+export const IcAnomaly = (p: P) => (
+  <Base {...p}>
+    <path d="M8 1.6 2 12.8h12L8 1.6Z" />
+    <circle cx="8" cy="10.4" r=".2" fill="currentColor" stroke="currentColor" strokeWidth={1.6} />
+    <path d="M8 6v2.6" />
+  </Base>
+)
+
+export const IcMapPin = (p: P) => (
+  <Base {...p}>
+    <path d="M8 14.4s5-4.3 5-8A5 5 0 0 0 3 6.4c0 3.7 5 8 5 8Z" />
+    <circle cx="8" cy="6.3" r="1.9" />
+  </Base>
+)
+
+export const IcCrown = (p: P) => (
+  <Base {...p}>
+    <path d="M2 6.2 4.6 8l1.8-3.2L8 7l1.6-2.2L11.4 8 14 6.2l-.9 6H2.9l-.9-6Z" />
+  </Base>
+)
+
+export const IcSwipe = (p: P) => (
+  <Base {...p}>
+    <path d="M2 8h8.4" />
+    <path d="M7.6 5l3.2 3-3.2 3" />
+    <path d="M12.4 4v8" strokeDasharray="1.6 1.8" />
+  </Base>
+)
+
+export const IcZap = (p: P) => (
+  <Base {...p}>
+    <path d="M8.6 1.8 3.4 9h3.3l-.9 5.2 5.8-7.4H8.1l.5-5Z" />
+  </Base>
+)

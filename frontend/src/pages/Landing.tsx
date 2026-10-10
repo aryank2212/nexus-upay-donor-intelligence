@@ -6,14 +6,46 @@ import { CTASection } from '../components/blocks/CTASection'
 import { ContactSection } from '../components/blocks/ContactSection'
 import { FAQAccordion } from '../components/blocks/FAQAccordion'
 import { LogoCloud } from '../components/blocks/LogoCloud'
+import { ReconciliationDemo } from '../components/blocks/ReconciliationDemo'
 import { TextGenerateEffect } from '../components/blocks/TextGenerateEffect'
 import {
   IcAlertTriangle,
+  IcAnomaly,
+  IcCrown,
   IcLink,
+  IcMapPin,
   IcShieldCheck,
   IcSpark,
   IcUpload,
+  IcWhatsapp,
 } from '../components/Icons'
+
+const SMART_FEATURES = [
+  {
+    icon: IcCrown,
+    tone: 'lilac' as const,
+    title: 'Donor personas',
+    body: 'Every donor is classified from real giving history — Champion, Steady Monthly, Crisis Responder — not a guess.',
+  },
+  {
+    icon: IcAnomaly,
+    tone: 'clay' as const,
+    title: 'Anomaly detection',
+    body: 'Flags merges that disagree with themselves and unusually tight gift clusters — scanned fresh, not a one-off check.',
+  },
+  {
+    icon: IcMapPin,
+    tone: 'amber' as const,
+    title: 'Who to re-engage',
+    body: 'Lapsing donors ranked by real urgency — history and value lost to silence, not just a day count.',
+  },
+  {
+    icon: IcWhatsapp,
+    tone: 'sage' as const,
+    title: 'WhatsApp-native drafts',
+    body: 'Thank-yous route to WhatsApp when a donor has a phone on file, email otherwise — wherever the message actually gets read.',
+  },
+]
 
 const FEATURES = [
   {
@@ -67,9 +99,14 @@ export default function Landing() {
           </div>
           <span className="serif text-lg">NEXUS</span>
         </div>
-        <Link to="/login" className="btn btn-primary">
-          Sign in
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link to="/impact" className="btn">
+            Impact Wall
+          </Link>
+          <Link to="/login" className="btn btn-primary">
+            Sign in
+          </Link>
+        </div>
       </header>
 
       {/* ------------------------------------------------------------ hero */}
@@ -135,6 +172,48 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ------------------------------------------------------- see it work */}
+      <section className="mx-auto max-w-5xl px-6 pb-20">
+        <div className="mx-auto mb-10 max-w-xl text-center">
+          <div className="eyebrow mb-3">Watch it happen</div>
+          <h2 className="serif text-3xl">The same gift, seen three ways, made one</h2>
+        </div>
+        <div className="card card-pad">
+          <ReconciliationDemo />
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------- smart layer */}
+      <section className="mx-auto max-w-6xl px-6 pb-20">
+        <div className="mx-auto max-w-xl text-center">
+          <div className="eyebrow mb-3">Beyond reconciliation</div>
+          <h2 className="serif text-3xl">Smart enough to notice, not just tidy</h2>
+          <p className="muted mt-3 text-sm leading-relaxed">
+            Every one of these runs on real donor data already in NEXUS &mdash; nothing below is a
+            mock-up.
+          </p>
+        </div>
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {SMART_FEATURES.map((f) => (
+            <div key={f.title} className="card card-pad lift">
+              <span
+                className="kpi-ic"
+                style={{ background: `var(--${f.tone}-bg)`, color: `var(--${f.tone}-ink)` }}
+              >
+                <f.icon size={16} />
+              </span>
+              <h3 className="serif mt-3 text-base">{f.title}</h3>
+              <p className="dim mt-1.5 text-sm leading-relaxed">{f.body}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 text-center">
+          <Link to="/impact" className="text-sm font-semibold" style={{ color: 'var(--accent-strong)' }}>
+            See the real aggregate numbers on the Impact Wall &rarr;
+          </Link>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-4xl px-6 pb-20">
         <CTASection />
       </section>
@@ -166,7 +245,7 @@ export default function Landing() {
       <footer className="border-t px-6 py-8 text-center" style={{ borderColor: 'var(--line-soft)' }}>
         <p className="dim text-xs">
           Built by Team 4RottenRats for Samadhan 2026-27, a challenge by UPAY NGO. Not an official
-          UPAY product.
+          UPAY product. &middot; <Link to="/impact" className="hover:underline">Impact Wall</Link>
         </p>
       </footer>
     </div>

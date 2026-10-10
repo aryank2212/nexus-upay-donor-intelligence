@@ -1,10 +1,13 @@
 import type {
+  Anomaly,
+  AtRiskDonor,
   AuthResponse,
   ContactMessage,
   DashboardData,
   Donor,
   DonorDetail,
   Draft,
+  ImpactWall,
   ImportRow,
   ImportSummary,
   PublicStats,
@@ -72,6 +75,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 export const api = {
   health: () => request<{ status: string }>('/health'),
   publicStats: () => request<PublicStats>('/public/stats'),
+  impactWall: () => request<ImpactWall>('/public/impact-wall'),
+
+  anomalies: () => request<Anomaly[]>('/insights/anomalies'),
+  atRisk: (limit = 10) => request<AtRiskDonor[]>(`/insights/at-risk?limit=${limit}`),
 
   register: (username: string, password: string, display_name: string) =>
     request<AuthResponse>('/auth/register', {

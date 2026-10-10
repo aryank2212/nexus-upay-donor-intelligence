@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.database import Base, SessionLocal, engine
-from app.routers import auth, contact, copilot, dashboard, donors, imports, public, review, seed
+from app.routers import auth, contact, copilot, dashboard, donors, imports, insights, public, review, seed
 from app import seed as seed_module
 
 settings = get_settings()
@@ -42,6 +42,7 @@ app.include_router(donors.router)
 app.include_router(review.router)
 app.include_router(dashboard.router)
 app.include_router(copilot.router)
+app.include_router(insights.router)
 app.include_router(seed.router)
 
 

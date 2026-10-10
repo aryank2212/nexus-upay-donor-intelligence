@@ -1,6 +1,7 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 import { api } from '../api/client'
 import type { Donor, Draft } from '../api/types'
+import { IcCheck, IcMail, IcWhatsapp } from '../components/Icons'
 import { Card, Chip, Empty, PageHead } from '../components/ui'
 
 export default function Copilot() {
@@ -103,18 +104,48 @@ function DraftCard({
   busy: boolean
   onApprove?: () => void
 }) {
+  const isWhatsapp = draft.channel === 'whatsapp'
+
   return (
     <Card pad lift className="flex flex-col" style={{ ['--i' as string]: index } as CSSProperties}>
       <div className="flex items-center justify-between gap-2">
-        <Chip tone="lilac">
-          {draft.kind === 'thank_you' ? 'Thank-you' : draft.kind === 'update' ? 'Update' : 'Alert'}
-        </Chip>
+        <div className="flex items-center gap-1.5">
+          <Chip tone={isWhatsapp ? 'sage' : 'sky'}>
+            {isWhatsapp ? <IcWhatsapp size={11} /> : <IcMail size={11} />}
+            {isWhatsapp ? 'WhatsApp' : 'Email'}
+          </Chip>
+          <Chip tone="lilac">
+            {draft.kind === 'thank_you' ? 'Thank-you' : draft.kind === 'update' ? 'Update' : 'Alert'}
+          </Chip>
+        </div>
         <Chip tone={draft.generated_by === 'llm' ? 'sage' : undefined}>
           {draft.generated_by === 'llm' ? 'LLM draft' : 'Grounded template'}
         </Chip>
       </div>
-      <div className="serif mt-3 text-[15px] font-medium">{draft.subject}</div>
-      <p className="muted mt-2 flex-1 whitespace-pre-line text-sm leading-relaxed">{draft.body}</p>
+
+      {isWhatsapp ? (
+        <div
+          className="mt-3 flex-1 rounded-2xl p-3"
+          style={{ background: 'repeating-linear-gradient(135deg, var(--surface-2) 0 14px, var(--surface-3) 14px 28px)' }}
+        >
+          <div
+            className="relative max-w-[88%] rounded-lg rounded-tl-none px-3 py-2 text-[13px] leading-relaxed shadow-sm"
+            style={{ background: 'var(--sage-mid)', color: '#0b3d1f' }}
+          >
+            <p className="whitespace-pre-line">{draft.body}</p>
+            <div className="mt-1 flex items-center justify-end gap-1 text-[10px] opacity-70">
+              {draft.status === 'sent' && <IcCheck size={11} />}
+              {draft.status === 'sent' ? 'Sent' : 'Draft'}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="serif mt-3 text-[15px] font-medium">{draft.subject}</div>
+          <p className="muted mt-2 flex-1 whitespace-pre-line text-sm leading-relaxed">{draft.body}</p>
+        </>
+      )}
+
       <div className="mt-4 flex items-center justify-between border-t pt-3" style={{ borderColor: 'var(--line-soft)' }}>
         <div className="dim text-xs">Sources: {draft.sources.join(', ') || 'donor profile'}</div>
         {onApprove && (

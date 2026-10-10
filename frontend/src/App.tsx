@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import DonorDetail from './pages/DonorDetail'
 import Donors from './pages/Donors'
 import Import from './pages/Import'
+import ImpactWall from './pages/ImpactWall'
 import Landing from './pages/Landing'
 import ReviewQueue from './pages/ReviewQueue'
 
@@ -14,6 +15,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/impact" element={<ImpactWall />} />
       <Route path="/login" element={<Auth />} />
       <Route
         path="/app/*"

@@ -52,6 +52,13 @@ class DonorAliasOut(BaseModel):
     source: str
 
 
+class ImpactOut(BaseModel):
+    units: int
+    label: str
+    rate: float
+    sentence: str
+
+
 class DonationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
@@ -62,6 +69,14 @@ class DonationOut(BaseModel):
     status: str
     source_count: int
     acknowledgement_status: str
+    impact: ImpactOut | None = None
+
+
+class PersonaOut(BaseModel):
+    key: str
+    label: str
+    tone: str
+    blurb: str
 
 
 class DonorOut(BaseModel):
@@ -79,6 +94,25 @@ class DonorDetailOut(DonorOut):
     donations: list[DonationOut]
     total_given: float
     donation_count: int
+    persona: PersonaOut
+    total_impact: ImpactOut | None = None
+
+
+class AnomalyOut(BaseModel):
+    type: str
+    title: str
+    description: str
+    donor_ids: list[int] = []
+
+
+class AtRiskDonorOut(BaseModel):
+    donor_id: int
+    donor_name: str
+    days_since_last_gift: int
+    donation_count: int
+    total_given: float
+    last_campaign: str | None
+    urgency_score: float
 
 
 class ImportSummary(BaseModel):
@@ -116,6 +150,7 @@ class DraftOut(BaseModel):
     donor_id: int | None
     donation_id: int | None
     kind: str
+    channel: str
     status: str
     subject: str
     body: str
