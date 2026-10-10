@@ -32,7 +32,7 @@ function NavList({ onNavigate, expanded }: { onNavigate?: () => void; expanded: 
           end={to === '/app'}
           onClick={onNavigate}
           className={({ isActive }) => `nav-item ${isActive ? 'on' : ''}`}
-          style={{ overflow: 'hidden' }}
+          style={{ overflow: 'hidden', justifyContent: expanded ? 'flex-start' : 'center', paddingInline: expanded ? 12 : 0 }}
         >
           <Icon size={16} className="flex-none" />
           {expanded && <span className="whitespace-nowrap">{label}</span>}
@@ -66,33 +66,51 @@ function Brand({ expanded }: { expanded: boolean }) {
 function Footer({ expanded, onLogout }: { expanded: boolean; onLogout: () => void }) {
   const { user } = useAuth()
   if (!user) return null
+
+  const avatar = (
+    <div
+      className="flex h-8 w-8 flex-none items-center justify-center rounded-full text-xs font-bold uppercase"
+      style={{ background: 'var(--accent-soft)', color: 'var(--navy)' }}
+    >
+      {initials(user.display_name) || user.username[0]}
+    </div>
+  )
+  const logoutButton = (
+    <button
+      onClick={onLogout}
+      title="Sign out"
+      className="flex h-8 w-8 flex-none items-center justify-center rounded-lg transition-colors hover:bg-white/10"
+      style={{ color: 'var(--navy-text-2)' }}
+    >
+      <IcLogout size={15} />
+    </button>
+  )
+
+  if (!expanded) {
+    return (
+      <div
+        className="flex flex-col items-center gap-2.5 px-2 py-4"
+        style={{ borderTop: '1px solid var(--navy-border)' }}
+      >
+        {avatar}
+        {logoutButton}
+      </div>
+    )
+  }
+
   return (
     <div
       className="flex items-center gap-2.5 overflow-hidden px-3 py-4"
       style={{ borderTop: '1px solid var(--navy-border)' }}
     >
-      <div
-        className="flex h-8 w-8 flex-none items-center justify-center rounded-full text-xs font-bold uppercase"
-        style={{ background: 'var(--accent-soft)', color: 'var(--navy)' }}
-      >
-        {initials(user.display_name) || user.username[0]}
-      </div>
-      {expanded && (
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-xs font-semibold text-white">{user.display_name}</div>
-          <div className="truncate text-[10.5px]" style={{ color: 'var(--navy-text-2)' }}>
-            @{user.username}
-          </div>
+      {avatar}
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-xs font-semibold text-white">{user.display_name}</div>
+        <div className="truncate text-[10.5px]" style={{ color: 'var(--navy-text-2)' }}>
+          @{user.username}
         </div>
-      )}
-      <button
-        onClick={onLogout}
-        title="Sign out"
-        className="flex h-7 w-7 flex-none items-center justify-center rounded-lg"
-        style={{ color: 'var(--navy-text-2)' }}
-      >
-        <IcLogout size={15} />
-      </button>
+      </div>
+      {logoutButton}
     </div>
   )
 }
