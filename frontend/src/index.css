@@ -1,0 +1,276 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   NEXUS design system
+   Navy + amber brand (matches UPAY's own mark), carried through as a
+   cool-paper, soft-shadow, rounded admin console. Structural patterns
+   (tone families, stat tiles, chips, cards) adapted from a reference
+   design system; palette and voice are NEXUS's own.
+   ========================================================================== */
+
+:root {
+  /* -- ground -------------------------------------------------------- */
+  --paper:      #F7F8FC;
+  --paper-deep: #EEF0F8;
+  --surface:    #FFFFFF;
+  --surface-2:  #F3F4FA;
+  --surface-3:  #E9EBF5;
+
+  /* -- ink ------------------------------------------------------------- */
+  --ink:   #121A3D;
+  --ink-2: #4B5278;
+  --ink-3: #7B82A3;
+  --ink-4: #A4A9C2;
+
+  /* -- structure --------------------------------------------------------- */
+  --line:        #E2E4F0;
+  --line-soft:   #EDEEF6;
+  --line-strong: #CBCEE2;
+
+  /* -- tone families -------------------------------------------------------
+     named by feel, not hue, so meaning survives a re-tune.
+     sage = good/reconciled · amber = watch/queued · clay = refer/unmatched
+     sky = info/measured · lilac = AI/copilot · blush = alert/duplicate */
+  --sage-bg:  #EAF6EC; --sage-mid:  #C7E7CF; --sage-line:  #90CFA2; --sage-ink:  #1E7A46;
+  --amber-bg: #FFF6E7; --amber-mid: #FCE4B7; --amber-line: #F3C87B; --amber-ink: #A2620F;
+  --clay-bg:  #FDF1EB; --clay-mid:  #F8D5C4; --clay-line:  #EFB095; --clay-ink:  #B24521;
+  --sky-bg:   #E6F7FF; --sky-mid:   #BFEBFF; --sky-line:   #7CD4FA; --sky-ink:   #0E93C4;
+  --lilac-bg: #F2F0FA; --lilac-mid: #DCD6EF; --lilac-line: #BBB0DE; --lilac-ink: #5C4C9F;
+  --blush-bg: #FDEFF1; --blush-mid: #F8D3D9; --blush-line: #EFAAB5; --blush-ink: #B02A45;
+
+  /* NEXUS brand accent — amber, echoing UPAY's mark. The one colour that
+     means "act". */
+  --accent:        #F2A33C;
+  --accent-strong: #D98B22;
+  --accent-soft:   #FDF0DC;
+  --accent-glow:   rgba(242, 163, 60, .32);
+
+  /* navy sidebar */
+  --navy:      #121A3D;
+  --navy-2:    #1C2654;
+  --navy-text: rgba(255,255,255,.92);
+  --navy-text-2: rgba(255,255,255,.62);
+  --navy-border: rgba(255,255,255,.12);
+
+  /* -- status -------------------------------------------------------- */
+  --success:    #1E7A46; --success-bg: #EAF6EC;
+  --warning:    #A2620F; --warning-bg: #FFF6E7;
+  --error:      #B02A45; --error-bg:   #FDEFF1;
+  --info:       #0E93C4; --info-bg:    #E6F7FF;
+
+  /* -- type -------------------------------------------------------------- */
+  --sans:  ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --serif: ui-serif, Georgia, "Times New Roman", serif;
+
+  /* -- elevation — navy-tinted so shadows read cool, not muddy ----------- */
+  --sh-1: 0 1px 2px rgba(18, 26, 61, .06), 0 1px 3px rgba(18, 26, 61, .05);
+  --sh-2: 0 2px 4px -1px rgba(18, 26, 61, .07), 0 4px 10px -3px rgba(18, 26, 61, .07);
+  --sh-3: 0 4px 8px -2px rgba(18, 26, 61, .08), 0 12px 22px -8px rgba(18, 26, 61, .10);
+  --sh-pop: 0 10px 18px -6px rgba(18, 26, 61, .16), 0 24px 48px -14px rgba(18, 26, 61, .20);
+
+  --r-xs: 8px; --r-sm: 11px; --r: 16px; --r-lg: 22px; --r-xl: 30px;
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --ease-press: cubic-bezier(.1, .9, .1, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+/* Everything here is a bare reset on a plain element selector (html, a,
+   button, h1-h4...) — kept inside @layer base so a Tailwind utility class
+   (text-white, text-ink, etc.) applied to the same element can still win
+   the cascade. Unlayered CSS always beats @layer CSS regardless of
+   specificity, which would otherwise make these rules unbeatable. */
+@layer base {
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  #root { min-height: 100vh; }
+
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; }
+
+  h1, h2, h3, h4 { margin: 0; font-weight: 650; letter-spacing: -0.016em; color: var(--ink); }
+  h1 { font-size: 27px; line-height: 1.15; letter-spacing: -0.026em; }
+  h2 { font-size: 18px; line-height: 1.25; letter-spacing: -0.018em; }
+  h3 { font-size: 15px; line-height: 1.3; }
+  p { margin: 0; }
+}
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; border: 3px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-4); background-clip: padding-box; border: 3px solid transparent; }
+
+.serif { font-family: var(--serif); font-weight: 500; letter-spacing: -0.01em; }
+.num { font-variant-numeric: tabular-nums; }
+.eyebrow {
+  font-size: 10.5px; font-weight: 650; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.muted { color: var(--ink-2); }
+.dim   { color: var(--ink-3); }
+.faint { color: var(--ink-4); }
+
+/* ---------------------------------------------------------------- card --- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--sh-1);
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.card-pad { padding: 20px 22px; }
+.card-hd {
+  padding: 16px 22px; border-bottom: 1px solid var(--line-soft);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.card-bd { padding: 20px 22px; }
+.card-quiet { background: var(--surface-2); box-shadow: none; }
+
+.lift { transition: translate .22s var(--ease-out), box-shadow .22s var(--ease-out), border-color .22s var(--ease); }
+.lift:hover { translate: 0 -2px; box-shadow: var(--sh-3); border-color: var(--line-strong); }
+@media (prefers-reduced-motion: reduce) { .lift:hover { translate: none; } }
+
+/* ---------------------------------------------------------------- chip --- */
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 600; letter-spacing: -.004em;
+  border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-2);
+  white-space: nowrap;
+}
+.chip .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; opacity: .85; }
+.chip-sage  { background: var(--sage-bg);  border-color: var(--sage-line);  color: var(--sage-ink); }
+.chip-amber { background: var(--amber-bg); border-color: var(--amber-line); color: var(--amber-ink); }
+.chip-clay  { background: var(--clay-bg);  border-color: var(--clay-line);  color: var(--clay-ink); }
+.chip-sky   { background: var(--sky-bg);   border-color: var(--sky-line);   color: var(--sky-ink); }
+.chip-lilac { background: var(--lilac-bg); border-color: var(--lilac-line); color: var(--lilac-ink); }
+.chip-blush { background: var(--blush-bg); border-color: var(--blush-line); color: var(--blush-ink); }
+
+/* ------------------------------------------------------------- kpi tile -- */
+.kpi-ic {
+  width: 32px; height: 32px; flex: 0 0 32px; border-radius: 11px;
+  display: grid; place-items: center;
+}
+.kpi-val { font-size: 28px; line-height: 1; letter-spacing: -0.02em; margin-top: 11px; }
+
+/* --------------------------------------------------------------- button -- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  height: 36px; padding: 0 16px; border-radius: 9px;
+  border: 1px solid var(--line-strong); background: var(--surface);
+  font-size: 13.5px; font-weight: 600; cursor: pointer;
+  box-shadow: var(--sh-1);
+  transition: background-color .15s var(--ease), border-color .15s var(--ease),
+              box-shadow .15s var(--ease), transform .1s var(--ease-press), opacity .15s var(--ease);
+}
+.btn:hover { background: var(--surface-2); border-color: var(--ink-4); box-shadow: var(--sh-2); }
+.btn:active { transform: translateY(1px) scale(.98); box-shadow: none; }
+.btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.btn-primary {
+  background: var(--navy); border-color: var(--navy); color: #FFFFFF;
+}
+.btn-primary:hover:not(:disabled) { background: var(--navy-2); border-color: var(--navy-2); }
+.btn-accent {
+  background: var(--accent); border-color: var(--accent); color: var(--navy);
+  box-shadow: 0 2px 10px var(--accent-glow);
+}
+.btn-accent:hover:not(:disabled) { background: var(--accent-strong); border-color: var(--accent-strong); box-shadow: 0 6px 20px var(--accent-glow); }
+.btn-ghost { background: transparent; border-color: transparent; box-shadow: none; color: var(--ink-2); }
+.btn-ghost:hover { background: var(--surface-3); border-color: transparent; box-shadow: none; }
+.btn-sm { height: 30px; padding: 0 12px; font-size: 12.5px; border-radius: 7px; }
+.btn-lg { height: 44px; padding: 0 22px; font-size: 14.5px; border-radius: 11px; }
+
+/* --------------------------------------------------------------- inputs -- */
+.input, .select {
+  height: 38px; padding: 0 14px; width: 100%;
+  border: 1px solid var(--line-strong); border-radius: 9px;
+  background: var(--surface); font-size: 13.5px; color: var(--ink);
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.input:focus, .select:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* --------------------------------------------------------------- table --- */
+.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px; }
+.tbl th {
+  text-align: left; font-weight: 600; font-size: 11px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-3);
+  padding: 12px 20px; border-bottom: 1px solid var(--line);
+  background: var(--surface-2); white-space: nowrap;
+}
+.tbl td { padding: 12px 20px; border-bottom: 1px solid var(--line-soft); vertical-align: middle; }
+.tbl tbody tr { transition: background .15s var(--ease); }
+.tbl tbody tr:hover { background: var(--surface-2); }
+
+/* -------------------------------------------------------------- misc ----- */
+.bar-track { height: 7px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+.bar-fill  { height: 100%; border-radius: 999px; transition: width .5s var(--ease); }
+
+/* ------------------------------------------------------ segmented tabs --- */
+.seg {
+  display: inline-flex; padding: 4px; gap: 2px; border-radius: 999px;
+  background: var(--surface-3); border: 1px solid var(--line);
+}
+.seg button {
+  border: 0; background: transparent; cursor: pointer;
+  min-height: 32px; padding: 0 15px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; color: var(--ink-3);
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: color .18s var(--ease), background-color .18s var(--ease);
+}
+.seg button:hover { color: var(--ink); }
+.seg button[data-on="true"] { background: var(--surface); color: var(--navy); box-shadow: var(--sh-1); }
+
+/* ------------------------------------------------------------- entry ----- */
+.enter {
+  opacity: 1; translate: 0 0;
+  transition: opacity .34s var(--ease-out), translate .34s var(--ease-out);
+}
+@starting-style { .enter { opacity: 0; translate: 0 10px; } }
+.enter-list > * {
+  opacity: 1; translate: 0 0;
+  transition: opacity .38s var(--ease-out), translate .38s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 42ms);
+}
+@starting-style { .enter-list > * { opacity: 0; translate: 0 12px; } }
+@media (prefers-reduced-motion: reduce) {
+  .enter, .enter-list > * { translate: none; transition-duration: .01ms; }
+}
+
+/* ------------------------------------------------------------- marquee --- */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.logo-marquee { animation: marquee-scroll 26s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .logo-marquee { animation: none; } }
+
+/* --------------------------------------------------------------- navy nav */
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 9px;
+  color: var(--navy-text-2); font-size: 13.5px; font-weight: 500;
+  transition: background-color .15s var(--ease), color .15s var(--ease);
+  position: relative; cursor: pointer;
+}
+.nav-item:hover { background: rgba(255,255,255,.08); color: var(--navy-text); }
+.nav-item.on {
+  background: var(--accent); color: var(--navy); font-weight: 650;
+}
